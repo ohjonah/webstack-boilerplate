@@ -37,8 +37,9 @@ module.exports = {
         new CleanWebpackPlugin(),
     ],
     devServer: {
-        contentBase: './dist',
+        contentBase: path.resolve(__dirname, 'dist'),
         hot: true,
         historyApiFallback: true,
+        open: true,
     },
 };
