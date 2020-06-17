@@ -5,6 +5,6 @@ import './styles.css';
 const title = 'React with Webpack and test';
 
 ReactDOM.render(
-    <div className="bg-green-500">{title}</div>,
+    <div className="bg-gray-500">{title}</div>,
     document.getElementById('app')
 );
