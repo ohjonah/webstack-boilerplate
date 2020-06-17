@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './styles.css';
 
 const title = 'React with Webpack and test';
 
-ReactDOM.render(<div>{title}</div>, document.getElementById('app'));
-
-module.hot.accept();
+ReactDOM.render(
+    <div className="bg-green-500">{title}</div>,
+    document.getElementById('app')
+);
