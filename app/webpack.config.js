@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 var path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     entry: './src/index.js',
@@ -27,6 +28,10 @@ module.exports = {
                     'postcss-loader',
                 ],
             },
+            {
+                test: /\.svg$/,
+                use: ['@svgr/webpack'],
+            },
         ],
     },
     resolve: {
@@ -35,6 +40,7 @@ module.exports = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new CleanWebpackPlugin(),
+        new Dotenv(),
     ],
     devServer: {
         contentBase: path.resolve(__dirname, 'dist'),
