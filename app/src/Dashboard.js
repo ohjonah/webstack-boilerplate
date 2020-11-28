@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 
+const PAGINATION_DEFAULT_VALUES = {
+    first: null,
+    prev: null,
+    next: null,
+    last: null,
+};
+
 const Dashboard = () => {
     const { currentUser, accessToken, authState, logout } = useAuth();
     const [data, setData] = useState([]);
-    const [pagination, setPagination] = useState(null);
+    const [pagination, setPagination] = useState(PAGINATION_DEFAULT_VALUES);
+    const [selectHistory, setSelectHistory] = useState({});
     const [isLoading, setLoading] = useState(true);
 
     const fetchReposAsync = async (
-        link = 'https://api.github.com/user/repos?page=1'
+        link = 'https://api.github.com/user/repos'
     ) => {
         setLoading(true);
         const res = await fetch(link, {
@@ -18,13 +26,19 @@ const Dashboard = () => {
         });
 
         if (res.headers.get('Link')) {
-            const paginatedLinks = {};
+            const paginatedLinks = {
+                first: null,
+                prev: null,
+                next: null,
+                last: null,
+            };
 
             res.headers
                 .get('Link')
+                .replace(/\s/g, '')
                 .split(',')
                 .forEach((link) => {
-                    const links = link.split('; rel=');
+                    const links = link.split(';rel=');
                     const url = links[0].slice(1, links[0].length - 1);
                     const place = links[1].slice(1, links[1].length - 1);
                     paginatedLinks[place] = url;
@@ -35,7 +49,11 @@ const Dashboard = () => {
 
         if (res.status >= 200 && res.status <= 299) {
             const data = await res.json();
-            data.forEach((repo) => (repo.isChecked = false));
+            data.forEach((repo) => {
+                selectHistory[+repo.id]
+                    ? (repo.isChecked = true)
+                    : (repo.isChecked = false);
+            });
 
             setData(data);
             setLoading(false);
@@ -51,18 +69,27 @@ const Dashboard = () => {
 
     const handleCheck = (event) => {
         const { name } = event.target;
+        const newSelectHistory = { ...selectHistory };
 
         const checked = data.map((repo) => {
-            if (repo.id == name) repo.isChecked = !repo.isChecked;
+            if (repo.id == name) {
+                selectHistory[+repo.id]
+                    ? delete newSelectHistory[+repo.id]
+                    : (newSelectHistory[+repo.id] = repo);
+
+                repo.isChecked = !repo.isChecked;
+            }
+
             return repo;
         });
 
+        setSelectHistory(newSelectHistory);
         setData(checked);
     };
 
     const handleReview = (event) => {
-        const review = data.filter((repo) => repo.isChecked === true);
-        console.log('review:', review);
+        // const selectHistory = data.filter((repo) => repo.isChecked === true);
+        console.log('SELECTED:', selectHistory);
     };
 
     const handleLogout = () => {
@@ -80,8 +107,8 @@ const Dashboard = () => {
 
     return (
         <div className="flex flex-col items-center h-screen">
-            <div className="container max-w-screen-lg">
-                <div className="flex flex-row justify-between mt-4 px-4 lg:px-0">
+            <div className="container max-w-screen-lg px-4 lg:px-0">
+                <div className="flex flex-row justify-between my-2">
                     <h1 className="text-2xl font-bold">
                         {authState.isLoading
                             ? 'Loading up your profile!'
@@ -96,47 +123,62 @@ const Dashboard = () => {
                     </button>
                 </div>
 
-                <div className="my-8 flex flex-row justify-between">
-                    <button
-                        onClick={handleFilter}
-                        className="bg-blue-500 hover:bg-green-500 text-white font-bold px-2 rounded focus:outline-none focus:shadow-outline"
-                        type="button"
-                    >
-                        Filter by
-                    </button>
-                    <div>
-                        {pagination && pagination.prev && (
-                            <button
-                                name="prev"
-                                onClick={handlePageTurn}
-                                className="mr-2 bg-blue-600 hover:bg-blue-400 text-white font-bold px-2 rounded focus:outline-none focus:shadow-outline"
-                            >
-                                &lt; Previous
-                            </button>
-                        )}
-                        {pagination && pagination.next && (
-                            <button
-                                name="next"
-                                onClick={handlePageTurn}
-                                className="bg-blue-600 hover:bg-blue-400 text-white font-bold px-2 rounded focus:outline-none focus:shadow-outline"
-                            >
-                                Next &gt;
-                            </button>
-                        )}
-                    </div>
-                </div>
-
-                {data.filter((repo) => repo.isChecked === true).length > 0 && (
-                    <div className="flex justify-end">
+                {Object.keys(selectHistory).length > 0 ? (
+                    <div className="flex justify-between items-center text-center my-4 p-3 rounded bg-yellow-200 border border-yellow-700">
+                        <span className="text-yellow-700 text-bold">
+                            Review your selections before deleting repos.
+                        </span>
                         <button
                             onClick={handleReview}
-                            className="bg-blue-500 hover:bg-green-500 text-white font-bold px-2 rounded focus:outline-none focus:shadow-outline"
+                            className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded focus:outline-none focus:shadow-outline"
                             type="button"
                         >
                             Review
                         </button>
                     </div>
+                ) : (
+                    <div className="flex justify-between items-center text-center my-4 p-3 rounded bg-blue-200 border border-blue-700">
+                        <span className="text-blue-700 text-bold">
+                            Select repos you want to delete. Review them before
+                            deletion. When you're done, log out!
+                        </span>
+                    </div>
                 )}
+                <div className="flex flex-row justify-between my-2">
+                    <button
+                        onClick={handleFilter}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline"
+                        type="button"
+                    >
+                        Filter by
+                    </button>
+                    <div>
+                        <button
+                            name="prev"
+                            onClick={handlePageTurn}
+                            className={`mr-2 bg-gray-100 ${
+                                pagination.prev
+                                    ? 'text-gray-800'
+                                    : 'text-gray-500'
+                            } hover:bg-gray-200  px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline`}
+                            disabled={pagination.prev === null}
+                        >
+                            &lt; Previous
+                        </button>
+                        <button
+                            name="next"
+                            onClick={handlePageTurn}
+                            className={`mr-2 bg-gray-100 ${
+                                pagination.next === pagination.last
+                                    ? 'text-gray-500'
+                                    : 'text-gray-800'
+                            } hover:bg-gray-200  px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline`}
+                            disabled={pagination.next === pagination.last}
+                        >
+                            Next &gt;
+                        </button>
+                    </div>
+                </div>
 
                 {isLoading ? (
                     <div>Loading...</div>

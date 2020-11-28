@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import { useHistory } from 'react-router-dom';
 
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -29,7 +30,7 @@ const AuthProvider = ({ children }) => {
         JSON.parse(sessionStorage.getItem('accessToken'))
     );
 
-    const login = async () => {
+    const login = async (next) => {
         setAuthState({ ...authState, isLoading: true });
 
         try {
@@ -43,10 +44,12 @@ const AuthProvider = ({ children }) => {
 
             sessionStorage.setItem('currentUser', JSON.stringify(user));
             sessionStorage.setItem('accessToken', JSON.stringify(accessToken));
-
-            setAuthState({ ...authState, isLoading: false });
+            setAuthState({ error: null, isLoading: false });
+            next();
         } catch (err) {
-            console.error(err);
+            next();
+            console.error(err.message);
+            setAuthState({ error: err.message, isLoading: false });
         }
     };
 
