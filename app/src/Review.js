@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { useRepos } from './ReposContext';
 import DashboardLayout from './layout/DashboardLayout';
 import * as ROUTES from './constants/routes';
-import { repos } from './repos';
+// import { repos } from './repos';
 
 const Review = () => {
     const history = useHistory();

@@ -22,7 +22,7 @@ const Dashboard = () => {
     const [isLoading, setLoading] = useState(true);
 
     const fetchReposAsync = async (
-        link = 'https://api.github.com/user/repos'
+        link = 'https://api.github.com/user/repos?type=owner'
     ) => {
         setLoading(true);
         const res = await fetch(link, {
