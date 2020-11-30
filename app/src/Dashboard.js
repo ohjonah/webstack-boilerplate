@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { useRepos } from './ReposContext';
+import { useHistory } from 'react-router-dom';
+import * as ROUTES from './constants/routes';
+import DashboardLayout from './layout/DashboardLayout';
 
 const PAGINATION_DEFAULT_VALUES = {
     first: null,
@@ -9,7 +13,9 @@ const PAGINATION_DEFAULT_VALUES = {
 };
 
 const Dashboard = () => {
-    const { currentUser, accessToken, authState, logout } = useAuth();
+    const { accessToken } = useAuth();
+    const [state, dispatch] = useRepos();
+    const history = useHistory();
     const [data, setData] = useState([]);
     const [pagination, setPagination] = useState(PAGINATION_DEFAULT_VALUES);
     const [selectHistory, setSelectHistory] = useState({});
@@ -88,12 +94,9 @@ const Dashboard = () => {
     };
 
     const handleReview = (event) => {
-        // const selectHistory = data.filter((repo) => repo.isChecked === true);
-        console.log('SELECTED:', selectHistory);
-    };
-
-    const handleLogout = () => {
-        logout();
+        const selected = Object.values(selectHistory);
+        dispatch({ type: 'SET_REPOS', payload: selected });
+        history.push(ROUTES.REVIEW);
     };
 
     const handlePageTurn = (event) => {
@@ -106,135 +109,105 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="flex flex-col items-center h-screen">
-            <div className="container max-w-screen-lg px-4 lg:px-0">
-                <div className="flex flex-row justify-between my-2">
-                    <h1 className="text-2xl font-bold">
-                        {authState.isLoading
-                            ? 'Loading up your profile!'
-                            : `Hi, ${currentUser.displayName}!`}
-                    </h1>
+        <DashboardLayout>
+            {Object.keys(selectHistory).length > 0 ? (
+                <div className="flex justify-between items-center text-center my-4 p-3 rounded bg-yellow-200 border border-yellow-700">
+                    <span className="text-yellow-700 text-bold">
+                        Review your selections before deleting repos.
+                    </span>
                     <button
-                        onClick={handleLogout}
-                        className="bg-red-500 hover:bg-green-500 text-white px-2 rounded focus:outline-none focus:shadow-outline"
+                        onClick={handleReview}
+                        className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded focus:outline-none focus:shadow-outline"
                         type="button"
                     >
-                        {authState.isLoading ? 'Loading' : 'Log Out'}
+                        Review
                     </button>
                 </div>
-
-                {Object.keys(selectHistory).length > 0 ? (
-                    <div className="flex justify-between items-center text-center my-4 p-3 rounded bg-yellow-200 border border-yellow-700">
-                        <span className="text-yellow-700 text-bold">
-                            Review your selections before deleting repos.
-                        </span>
-                        <button
-                            onClick={handleReview}
-                            className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded focus:outline-none focus:shadow-outline"
-                            type="button"
-                        >
-                            Review
-                        </button>
-                    </div>
-                ) : (
-                    <div className="flex justify-between items-center text-center my-4 p-3 rounded bg-blue-200 border border-blue-700">
-                        <span className="text-blue-700 text-bold">
-                            Select repos you want to delete. Review them before
-                            deletion. When you're done, log out!
-                        </span>
-                    </div>
-                )}
-                <div className="flex flex-row justify-between my-2">
+            ) : (
+                <div className="flex justify-between items-center text-center my-4 p-3 rounded bg-blue-200 border border-blue-700">
+                    <span className="text-blue-700 text-bold">
+                        Select repos you want to delete. Review them before
+                        deletion. When you're done, log out!
+                    </span>
+                </div>
+            )}
+            <div className="flex flex-row justify-between my-2">
+                <button
+                    onClick={handleFilter}
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline"
+                    type="button"
+                >
+                    Filter by
+                </button>
+                <div>
                     <button
-                        onClick={handleFilter}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline"
-                        type="button"
+                        name="prev"
+                        onClick={handlePageTurn}
+                        className={`mr-2 bg-gray-100 ${
+                            pagination.prev ? 'text-gray-800' : 'text-gray-500'
+                        } hover:bg-gray-200  px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline`}
+                        disabled={pagination.prev === null}
                     >
-                        Filter by
+                        &lt; Previous
                     </button>
-                    <div>
-                        <button
-                            name="prev"
-                            onClick={handlePageTurn}
-                            className={`mr-2 bg-gray-100 ${
-                                pagination.prev
-                                    ? 'text-gray-800'
-                                    : 'text-gray-500'
-                            } hover:bg-gray-200  px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline`}
-                            disabled={pagination.prev === null}
-                        >
-                            &lt; Previous
-                        </button>
-                        <button
-                            name="next"
-                            onClick={handlePageTurn}
-                            className={`mr-2 bg-gray-100 ${
-                                pagination.next === pagination.last
-                                    ? 'text-gray-500'
-                                    : 'text-gray-800'
-                            } hover:bg-gray-200  px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline`}
-                            disabled={pagination.next === pagination.last}
-                        >
-                            Next &gt;
-                        </button>
-                    </div>
+                    <button
+                        name="next"
+                        onClick={handlePageTurn}
+                        className={`mr-2 bg-gray-100 ${
+                            pagination.next === pagination.last
+                                ? 'text-gray-500'
+                                : 'text-gray-800'
+                        } hover:bg-gray-200  px-2 rounded border border-gray-400 text-sm focus:outline-none focus:shadow-outline`}
+                        disabled={pagination.next === pagination.last}
+                    >
+                        Next &gt;
+                    </button>
                 </div>
-
-                {isLoading ? (
-                    <div>Loading...</div>
-                ) : (
-                    <table className="table w-full">
-                        <thead>
-                            <tr>
-                                <th className="px-4 py-2">Select</th>
-                                <th className="px-4 py-2">Name</th>
-                                <th className="px-4 py-2">Description</th>
-                                <th className="px-4 py-2">Fork</th>
-                                <th className="px-4 py-2">Last Updated</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((repo) => (
-                                <tr key={repo.id}>
-                                    <td className="border px-4 py-2">
-                                        <div className="flex justify-center">
-                                            <input
-                                                type="checkbox"
-                                                name={repo.id}
-                                                checked={
-                                                    repo.isChecked || false
-                                                }
-                                                onChange={handleCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td className="border px-4 py-2">
-                                        {repo.name}
-                                    </td>
-                                    <td className="border px-4 py-2">
-                                        {repo.description}
-                                    </td>
-                                    <td className="border px-4 py-2">{`${repo.fork}`}</td>
-                                    <td className="border px-4 py-2">
-                                        {repo.updated_at}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
             </div>
-            <Footer />
-        </div>
+
+            {isLoading ? (
+                <div>Loading...</div>
+            ) : (
+                <table className="table w-full">
+                    <thead>
+                        <tr>
+                            <th className="px-4 py-2">Select</th>
+                            <th className="px-4 py-2">Name</th>
+                            <th className="px-4 py-2">Description</th>
+                            <th className="px-4 py-2">Fork</th>
+                            <th className="px-4 py-2">Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map((repo) => (
+                            <tr key={repo.id}>
+                                <td className="border-t border-b px-4 py-2">
+                                    <div className="flex justify-center">
+                                        <input
+                                            type="checkbox"
+                                            name={repo.id}
+                                            checked={repo.isChecked || false}
+                                            onChange={handleCheck}
+                                        />
+                                    </div>
+                                </td>
+                                <td className="border-t border-b px-4 py-2">
+                                    {repo.name}
+                                </td>
+                                <td className="border-t border-b px-4 py-2">
+                                    {repo.description}
+                                </td>
+                                <td className="border-t border-b px-4 py-2">{`${repo.fork}`}</td>
+                                <td className="border-t border-b px-4 py-2">
+                                    {repo.updated_at}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+        </DashboardLayout>
     );
 };
-
-const Footer = () => (
-    <div className="py-8">
-        <p className="font-bold text-sm">
-            Made with React and TailwindCSS using the Github API
-        </p>
-    </div>
-);
 
 export default Dashboard;

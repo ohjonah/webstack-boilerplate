@@ -7,6 +7,8 @@
     -   clickable/sortable headers
 -   [] Store Context for passing data for "Review" stage.
 -   [] Review Page
+    -   deselect item
+    -   undo deselected item
 -   [] Delete Page
 
 # USER FLOW

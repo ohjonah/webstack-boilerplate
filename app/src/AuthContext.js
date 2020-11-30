@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { useHistory } from 'react-router-dom';
 
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -15,6 +14,7 @@ const config = {
 firebase.initializeApp(config);
 const githubProvider = new firebase.auth.GithubAuthProvider();
 githubProvider.addScope('repo');
+githubProvider.addScope('delete_repo');
 
 const AuthContext = React.createContext();
 

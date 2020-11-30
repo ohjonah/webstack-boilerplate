@@ -7,8 +7,7 @@ import Review from './Review';
 import * as ROUTES from './constants/routes';
 
 import ProtectedRoute from './ProtectedRoute';
-
-const Redirected = () => <div>Try Signing In</div>;
+import { ReposProvider } from './ReposContext';
 
 const App = () => (
     <Router>
@@ -16,12 +15,14 @@ const App = () => (
             <Route exact path={ROUTES.HOME}>
                 <Home />
             </Route>
-            <ProtectedRoute path={ROUTES.DASHBOARD}>
-                <Dashboard />
-            </ProtectedRoute>
-            <ProtectedRoute path={ROUTES.REVIEW}>
-                <Review />
-            </ProtectedRoute>
+            <ReposProvider>
+                <ProtectedRoute path={ROUTES.DASHBOARD}>
+                    <Dashboard />
+                </ProtectedRoute>
+                <ProtectedRoute path={ROUTES.REVIEW}>
+                    <Review />
+                </ProtectedRoute>
+            </ReposProvider>
         </Switch>
     </Router>
 );
