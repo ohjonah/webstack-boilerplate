@@ -8,15 +8,15 @@ import * as ROUTES from './constants/routes';
 const Review = () => {
     const history = useHistory();
     const [state, dispatch] = useRepos();
-    // const state = { repos: repos };
+
     const handleConfirm = () => {
         console.log('deleting...');
+        dispatch({ type:'DELETE_REPOS', payload: state.repos})
     };
 
     const handleRemove = (event) => {
         const { name } = event.target;
         dispatch({ type: 'REMOVE_REPO', payload: +name });
-        console.log('removing...');
     };
 
     const handleBackToDashboard = () => {
@@ -35,14 +35,14 @@ const Review = () => {
                         </span>
                     </div>
 
-                    <table className="table w-full">
+                    <table className="table w-full text-left">
                         <thead>
                             <tr>
                                 <th className="px-4 py-2">Name</th>
                                 <th className="px-4 py-2">Description</th>
                                 <th className="px-4 py-2">Fork</th>
-                                <th className="px-4 py-2">Last Updated</th>
-                                <th className="px-4 py-2"></th>
+                                <th className="px-4 py-2">Created</th>
+                                <th className="px-4 py-2">Committed</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,17 +56,20 @@ const Review = () => {
                                     </td>
                                     <td className="border-t border-b px-4 py-2">{`${repo.fork}`}</td>
                                     <td className="border-t border-b px-4 py-2">
-                                        {repo.updated_at}
+                                        {new Date(repo.created_at).toLocaleDateString()}
+                                    </td>
+                                    <td className="border-t border-b px-4 py-2">
+                                        {new Date(repo.pushed_at).toLocaleDateString()}
                                     </td>
                                     <td className="border-t border-b px-4 py-2">
                                         <div className="flex justify-center">
                                             <button
                                                 name={repo.id}
                                                 onClick={handleRemove}
-                                                className="bg-red-500 hover:bg-red-400 text-white px-3 py-1 rounded focus:outline-none focus:shadow-outline"
+                                                className="bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1 rounded focus:outline-none focus:shadow-outline"
                                                 type="button"
                                             >
-                                                Remove
+                                                Keep
                                             </button>
                                         </div>
                                     </td>
@@ -76,7 +79,7 @@ const Review = () => {
                     </table>
                     <button
                         onClick={handleConfirm}
-                        className="block w-48 mx-auto bg-red-600 hover:bg-red-500 text-white my-4 p-2 rounded focus:outline-none focus:shadow-outline"
+                        className="block w-48 mx-auto bg-red-600 hover:bg-red-500 text-white my-8 p-2 rounded focus:outline-none focus:shadow-outline"
                         type="button"
                     >
                         Delete My Repos

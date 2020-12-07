@@ -210,7 +210,7 @@ const Dashboard = () => {
                         <th className="px-4 py-2 cursor-pointer">
                             <a
                                 name="created"
-                                className="flex flex-row w-full items-center"
+                                className={`flex flex-row w-full items-center ${params.sort === 'created' && 'border-black border-b-2'}`}
                                 onClick={handleFilterSelect}
                             >
                                 <span className="pr-1">Created</span>
@@ -225,7 +225,7 @@ const Dashboard = () => {
                         <th className="px-4 py-2 cursor-pointer">
                             <a
                                 name="pushed"
-                                className="flex flex-row w-full items-center"
+                                className={`flex flex-row w-full items-center ${params.sort === 'pushed' && 'border-black border-b-2'}`}
                                 onClick={handleFilterSelect}
                             >
                                 <span className="pr-1">Committed</span>

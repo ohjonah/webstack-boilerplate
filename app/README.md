@@ -1,3 +1,13 @@
+# Things I've learned:
+- Libraries: React, TailwindCSS, Firebase Auth
+- React: Hooks / Reducers / Context
+- Deploying through Netlify
+- Minimal Webpack with SVG support
+- Consuming data from an api
+- Protected Routes using `react-router-dom`
+- Implementing a table with sorting capabilities for data
+- Handling async/await in a reducer.
+
 # USER FLOW
 
 1. User is authorized by Github OAuth
