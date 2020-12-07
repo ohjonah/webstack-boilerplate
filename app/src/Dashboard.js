@@ -4,14 +4,10 @@ import { useRepos } from './ReposContext';
 import { useHistory } from 'react-router-dom';
 import * as ROUTES from './constants/routes';
 import DashboardLayout from './layout/DashboardLayout';
-import FILTER_ICON from './assets/images/filter_icon_xsm.svg';
-import TRASH_EMPTY_ICON from './assets/images/trash-empty.svg';
-import TRASH_FULL_ICON from './assets/images/trash-full.svg';
-import CHECK_ICON from './assets/images/check.svg';
 import CHECK_SQUARE_ICON from './assets/images/check-square.svg';
 import SQUARE_ICON from './assets/images/square.svg';
-import ARROW_UP_ICON from './assets/images/arrow-up.svg';
-import ARROW_DOWN_ICON from './assets/images/arrow-down.svg';
+import ARROW_UP_CIRCLE_ICON from './assets/images/arrow-up-circle.svg';
+import ARROW_DOWN_CIRCLE_ICON from './assets/images/arrow-down-circle.svg';
 
 const API_GITHUB = 'https://api.github.com/user/repos';
 
@@ -142,28 +138,14 @@ const Dashboard = () => {
 
     const handleFilterSelect = async (event) => {
         const { name } = event.currentTarget;
-        // if (name === params.direction) return;
-
         const newParams = { ...params };
-        newParams.sort = name;
-        newParams.direction = params.direction !== 'asc' ? 'asc' : 'desc';
 
-        // switch (name) {
-        //     case 'desc':
-        //     case 'asc':
-        //         newParams.direction = name;
-        //         break;
-        //     case 'created':
-        //     case 'updated':
-        //     case 'pushed':
-        //         newParams.sort = name;
-        //         break;
-        //     case 'reset':
-        //         newParams = DEFAULT_PARAMS;
-        //         break;
-        //     default:
-        //         break;
-        // }
+        if (name !== params.sort) {
+            newParams.sort = name;
+            newParams.direction = 'desc';
+        } else {
+            newParams.direction = params.direction === 'desc' ? 'asc' : 'desc';
+        }
 
         setParams(newParams);
     };
@@ -191,88 +173,7 @@ const Dashboard = () => {
                     </span>
                 </div>
             )}
-            <div className="flex flex-row justify-between my-2">
-                <div className="relative">
-                    <button
-                        onClick={handleFilterDropdown}
-                        className="flex justify-center items-center px-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded border border-gray-400 focus:outline-none focus:shadow-outline"
-                        type="button"
-                    >
-                        <span className="pr-1">{`Sort: ${
-                            params.sort.charAt(0).toUpperCase() +
-                            params.sort.slice(1)
-                        }`}</span>
-                        {/* <FILTER_ICON strokeWidth="2" width="12" height="12" /> */}
-                    </button>
-                    {isOpen && (
-                        <div
-                            className="absolute mt-2 py-2 w-48 border border-gray-400 bg-gray-100 rounded-lg shadow-md"
-                            onMouseLeave={handleFilterDropdown}
-                        >
-                            <button
-                                name="created"
-                                onClick={handleFilterSelect}
-                                className="flex flex-row w-full items-center px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white cursor-pointer"
-                            >
-                                {params.sort === 'created' ? (
-                                    <CHECK_SQUARE_ICON />
-                                ) : (
-                                    <SQUARE_ICON />
-                                )}
-                                <span className="pl-2">Created</span>
-                            </button>
-                            <button
-                                name="updated"
-                                onClick={handleFilterSelect}
-                                className="flex flex-row w-full items-center px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white cursor-pointer"
-                            >
-                                {params.sort === 'updated' ? (
-                                    <CHECK_SQUARE_ICON />
-                                ) : (
-                                    <SQUARE_ICON />
-                                )}
-                                <span className="pl-2">Updated</span>
-                            </button>
-                            <button
-                                name="pushed"
-                                onClick={handleFilterSelect}
-                                className="flex flex-row w-full items-center px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white cursor-pointer"
-                            >
-                                {params.sort === 'pushed' ? (
-                                    <CHECK_SQUARE_ICON />
-                                ) : (
-                                    <SQUARE_ICON />
-                                )}
-                                <span className="pl-2">Pushed</span>
-                            </button>
-                            <hr className="m-1" />
-                        </div>
-                    )}
-                </div>
-                <div className="flex flex-row">
-                    <button
-                        name="asc"
-                        onClick={handleFilterSelect}
-                        className={`flex justify-center items-center px-2 hover:bg-gray-200 ${
-                            params.direction === 'asc'
-                                ? 'bg-gray-200 border-gray-400 text-gray-800'
-                                : 'border-gray-400 text-gray-500'
-                        } border-r-0 rounded-l border border-gray-400 focus:outline-none focus:shadow-outline`}
-                    >
-                        Ascending
-                    </button>
-                    <button
-                        name="desc"
-                        onClick={handleFilterSelect}
-                        className={`flex justify-center items-center px-2 hover:bg-gray-200 border ${
-                            params.direction === 'desc'
-                                ? 'bg-gray-200 border-gray-400 text-gray-800'
-                                : 'border-gray-400 text-gray-500'
-                        } rounded-r focus:outline-none focus:shadow-outline`}
-                    >
-                        Descending
-                    </button>
-                </div>
+            <div className="flex flex-row justify-end my-2">
                 <div>
                     <button
                         name="prev"
@@ -312,17 +213,13 @@ const Dashboard = () => {
                                 className="flex flex-row w-full items-center"
                                 onClick={handleFilterSelect}
                             >
-                                <span className="pr-1">
-                                    {params.sort === 'created'
-                                        ? '*Created'
-                                        : 'Created'}
-                                </span>
-                                {params.direction === 'asc' &&
-                                params.sort === 'created' ? (
-                                    <ARROW_UP_ICON />
-                                ) : (
-                                    <ARROW_DOWN_ICON />
-                                )}
+                                <span className="pr-1">Created</span>
+                                {params.sort === 'created' &&
+                                    (params.direction === 'asc' ? (
+                                        <ARROW_UP_CIRCLE_ICON />
+                                    ) : (
+                                        <ARROW_DOWN_CIRCLE_ICON />
+                                    ))}
                             </a>
                         </th>
                         <th className="px-4 py-2 cursor-pointer">
@@ -331,17 +228,13 @@ const Dashboard = () => {
                                 className="flex flex-row w-full items-center"
                                 onClick={handleFilterSelect}
                             >
-                                <span className="pr-1">
-                                    {params.sort === 'pushed'
-                                        ? '*Committed'
-                                        : 'Committed'}
-                                </span>
-                                {params.direction === 'asc' &&
-                                params.sort === 'pushed' ? (
-                                    <ARROW_UP_ICON />
-                                ) : (
-                                    <ARROW_DOWN_ICON />
-                                )}
+                                <span className="pr-1">Committed</span>
+                                {params.sort === 'pushed' &&
+                                    (params.direction === 'asc' ? (
+                                        <ARROW_UP_CIRCLE_ICON />
+                                    ) : (
+                                        <ARROW_DOWN_CIRCLE_ICON />
+                                    ))}
                             </a>
                         </th>
                     </tr>
@@ -350,14 +243,25 @@ const Dashboard = () => {
                     {data.map((repo) => (
                         <tr key={repo.id}>
                             <td className="border-t border-b px-4 py-2">
-                                <div className="flex justify-center">
+                                {/* <div className="flex justify-center">
                                     <input
                                         type="checkbox"
                                         name={repo.id}
                                         checked={repo.isChecked || false}
                                         onChange={handleCheck}
                                     />
-                                </div>
+                                </div> */}
+                                <a
+                                    className="flex flex-row w-full justify-center cursor-pointer"
+                                    name={repo.id}
+                                    onClick={handleCheck}
+                                >
+                                    {repo.isChecked ? (
+                                        <CHECK_SQUARE_ICON />
+                                    ) : (
+                                        <SQUARE_ICON />
+                                    )}
+                                </a>
                             </td>
                             <td className="border-t border-b px-4 py-2">
                                 {repo.name}
