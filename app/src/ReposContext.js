@@ -7,16 +7,16 @@ const Reducer = (state, action) => {
                 ...state,
                 repos: action.payload,
             };
-        case 'REMOVE_REPO':
+        case 'REMOVE_REPO': // Removes it from "to be deleted" array;
             return {
                 ...state,
                 repos: state.repos.filter((repo) => repo.id !== action.payload),
             };
         case 'DELETE_REPOS':
-            console.log('reducer state:', state);
-            console.log('state to be deleted:', action.payload);
-            // TODO: Can you do async/await in reducer logic?
-            return state;
+            return {
+                ...state,
+                repos: [],
+            };
         default:
             return state;
     }

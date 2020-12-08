@@ -1,17 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useRepos } from './ReposContext';
 import DashboardLayout from './layout/DashboardLayout';
 import * as ROUTES from './constants/routes';
+import { useAuth } from './AuthContext';
 // import { repos } from './repos';
 
 const Review = () => {
     const history = useHistory();
     const [state, dispatch] = useRepos();
+    const [isLoading, setLoading] = useState(false);
+    const [hasDeleted, setHasDeleted] = useState(false);
+    const { currentUser } = useAuth();
+    const handleDelete = async () => {
+        setLoading(true);
+        console.log('current user:', currentUser);
+        // const baseURL = `https://api.github.com/repos/${}`;
+        // try {
+        //     let res = await Promise.allSettled(state.repos.map(repo => {
 
-    const handleConfirm = () => {
-        console.log('deleting...');
-        dispatch({ type:'DELETE_REPOS', payload: state.repos})
+        //     }))
+        // } catch (err) {
+        //     console.error('error:', err.message);
+        // }
+        // dispatch({ type: 'DELETE_REPOS' });
+        setHasDeleted(true);
+        setLoading(false);
     };
 
     const handleRemove = (event) => {
@@ -56,10 +70,14 @@ const Review = () => {
                                     </td>
                                     <td className="border-t border-b px-4 py-2">{`${repo.fork}`}</td>
                                     <td className="border-t border-b px-4 py-2">
-                                        {new Date(repo.created_at).toLocaleDateString()}
+                                        {new Date(
+                                            repo.created_at
+                                        ).toLocaleDateString()}
                                     </td>
                                     <td className="border-t border-b px-4 py-2">
-                                        {new Date(repo.pushed_at).toLocaleDateString()}
+                                        {new Date(
+                                            repo.pushed_at
+                                        ).toLocaleDateString()}
                                     </td>
                                     <td className="border-t border-b px-4 py-2">
                                         <div className="flex justify-center">
@@ -78,7 +96,7 @@ const Review = () => {
                         </tbody>
                     </table>
                     <button
-                        onClick={handleConfirm}
+                        onClick={handleDelete}
                         className="block w-48 mx-auto bg-red-600 hover:bg-red-500 text-white my-8 p-2 rounded focus:outline-none focus:shadow-outline"
                         type="button"
                     >
