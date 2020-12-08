@@ -11,20 +11,33 @@ const Review = () => {
     const [state, dispatch] = useRepos();
     const [isLoading, setLoading] = useState(false);
     const [hasDeleted, setHasDeleted] = useState(false);
-    const { currentUser } = useAuth();
+    const { currentUser, accessToken } = useAuth();
+    const [errors, setErrors] = useState([]);
+
     const handleDelete = async () => {
         setLoading(true);
-        console.log('current user:', currentUser);
-        // const baseURL = `https://api.github.com/repos/${}`;
-        // try {
-        //     let res = await Promise.allSettled(state.repos.map(repo => {
+        const baseURL = 'https://api.github.com/repos';
+        let rejects = [];
 
-        //     }))
-        // } catch (err) {
-        //     console.error('error:', err.message);
-        // }
-        // dispatch({ type: 'DELETE_REPOS' });
-        setHasDeleted(true);
+        Promise.allSettled(state.repos.map(repo => {
+            return fetch(`${baseURL}/${repo.owner.login}/${repo.name}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `token ${accessToken}`,
+                },
+            });
+        }))
+        .then(res => {
+            rejects = res.filter(({status})=> status === 'rejected');
+        })
+
+        if (rejects.length === 0) {
+            dispatch({ type: 'DELETE_REPOS' });
+            setHasDeleted(true);
+        } else {
+            setErrors(rejects);
+        }
+
         setLoading(false);
     };
 
@@ -99,24 +112,30 @@ const Review = () => {
                         onClick={handleDelete}
                         className="block w-48 mx-auto bg-red-600 hover:bg-red-500 text-white my-8 p-2 rounded focus:outline-none focus:shadow-outline"
                         type="button"
+                        disabled={isLoading}
                     >
-                        Delete My Repos
+                        {isLoading ? 'Deleting...' : 'Delete My Repos'}
                     </button>
                 </>
             ) : (
-                <div className="flex justify-between items-center text-center my-4 p-3 rounded bg-blue-200 border border-blue-700">
-                    <span className="text-blue-700 text-bold">
-                        No repos have been selected to be deleted.
-                    </span>
-                    <button
-                        onClick={handleBackToDashboard}
-                        className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded focus:outline-none focus:shadow-outline"
-                        type="button"
-                    >
-                        Back to Select Repos
+                    <div className="flex justify-between items-center text-center my-4 p-3 rounded bg-blue-200 border border-blue-700">
+                        {hasDeleted ?
+                            <span className="text-blue-700 text-bold">
+                                Repos have been deleted.
+                            </span>
+                            : <span className="text-blue-700 text-bold">
+                                No repos have been selected to be deleted.
+                            </span>
+                        }
+                        <button
+                            onClick={handleBackToDashboard}
+                            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded focus:outline-none focus:shadow-outline"
+                            type="button"
+                        >
+                            Back to Select Repos
                     </button>
-                </div>
-            )}
+                    </div>
+                )}
         </DashboardLayout>
     );
 };
