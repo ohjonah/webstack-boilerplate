@@ -2,6 +2,7 @@ const webpack = require('webpack');
 var path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
@@ -41,6 +42,9 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new CleanWebpackPlugin(),
         new Dotenv(),
+        new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, './src/index.html'),
+        }),
     ],
     devServer: {
         contentBase: path.resolve(__dirname, 'dist'),
