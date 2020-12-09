@@ -2,12 +2,13 @@ const webpack = require('webpack');
 var path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
     output: {
-        path: path.resolve(__dirname, '/dist'),
-        publicPath: '/',
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
     },
     module: {
