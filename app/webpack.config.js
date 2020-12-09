@@ -4,8 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = (env) => {
-    console.log('process:', process.env);
+module.exports = () => {
     return {
         entry: './src/index.js',
         output: {
