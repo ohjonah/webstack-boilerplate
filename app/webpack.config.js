@@ -42,7 +42,7 @@ module.exports = () => {
         plugins: [
             new webpack.HotModuleReplacementPlugin(),
             new CleanWebpackPlugin(),
-            new Dotenv(),
+            new Dotenv({path: path.resolve(__dirname, './.env')}),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, './src/index.html'),
             }),
