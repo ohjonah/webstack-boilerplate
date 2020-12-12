@@ -10,7 +10,6 @@ const Home = () => {
     const history = useHistory();
 
     const handleLogin = () => {
-        console.log('proccess', process.env.FIREBASE_API_KEY);
         login(() => {
             history.push(ROUTES.DASHBOARD);
         });

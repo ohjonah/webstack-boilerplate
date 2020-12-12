@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
-console.log('another test:', process.env.test);
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -18,7 +17,6 @@ githubProvider.addScope('repo');
 githubProvider.addScope('delete_repo');
 
 const AuthContext = React.createContext();
-console.log('another another test:', process.env.FIREBASE_API_KEY);
 
 const AuthProvider = ({ children }) => {
     const [authState, setAuthState] = useState({
