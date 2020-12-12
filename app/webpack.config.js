@@ -42,14 +42,9 @@ module.exports = (env) => {
         plugins: [
             new webpack.HotModuleReplacementPlugin(),
             new CleanWebpackPlugin(),
-            new Dotenv({path: path.resolve(__dirname, '.env')}),
-            new webpack.DefinePlugin({
-                'FIREBASE_API_KEY': JSON.stringify(process.env.FIREBASE_API_KEY),
-                'FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.FIREBASE_AUTH_DOMAIN),
-                'FIREBASE_DB_URL': JSON.stringify(process.env.FIREBASE_DB_URL),
-                'FIREBASE_PROJECT_ID': JSON.stringify(process.env.FIREBASE_PROJECT_ID),
-                'FIREBASE_STORAGE_BUCKET': JSON.stringify(process.env.FIREBASE_STORAGE_BUCKET),
-                'FIREBASE_SENDER_ID': JSON.stringify(process.env.FIREBASE_SENDER_ID),
+            new Dotenv({
+                path: path.resolve(__dirname, '.env'),
+                systemvars: true,
             }),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, './src/index.html'),
