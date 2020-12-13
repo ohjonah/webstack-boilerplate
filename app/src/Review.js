@@ -17,7 +17,7 @@ const Review = () => {
     const handleDelete = async () => {
         setLoading(true);
         const baseURL = 'https://api.github.com/repos';
-        let successes = ['hi', 'bye'];
+        let successes = [];
         let rejects = [];
 
         await Promise.allSettled(state.repos.map(repo => {
