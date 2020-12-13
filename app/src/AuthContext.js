@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/database';
 
 const config = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -12,6 +13,8 @@ const config = {
 };
 
 firebase.initializeApp(config);
+const db = firebase.database();
+
 const githubProvider = new firebase.auth.GithubAuthProvider();
 githubProvider.addScope('repo');
 githubProvider.addScope('delete_repo');
@@ -37,7 +40,13 @@ const AuthProvider = ({ children }) => {
             const {
                 user,
                 credential: { accessToken },
+                additionalUserInfo
             } = await firebase.auth().signInWithPopup(githubProvider);
+
+            if (additionalUserInfo.isNewUser) {
+                const { uid, email, displayName } = user;
+                await userAPI(uid).set({ email, displayName, stats: { deletedReposCount: 0 } });
+            }
 
             setAccessToken(accessToken);
             setCurrentUser(user);
@@ -63,9 +72,16 @@ const AuthProvider = ({ children }) => {
         firebase.auth().signOut();
     };
 
+    // *** User API ***
+    const userAPI = uid => db.ref(`users/${uid}`);
+
+    const users = () => db.ref('users');
+
+    const statsAPI = (path = null) => path ? db.ref(`users/${currentUser.uid}/stats/${path}`) : db.ref(`users/${currentUser.uid}/stats`);
+
     return (
         <AuthContext.Provider
-            value={{ currentUser, accessToken, authState, login, logout }}
+            value={{ currentUser, accessToken, authState, login, logout, userAPI, statsAPI }}
         >
             {children}
         </AuthContext.Provider>

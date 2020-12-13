@@ -11,15 +11,16 @@ const Review = () => {
     const [state, dispatch] = useRepos();
     const [isLoading, setLoading] = useState(false);
     const [hasDeleted, setHasDeleted] = useState(false);
-    const { currentUser, accessToken } = useAuth();
+    const { currentUser, accessToken, userAPI, statsAPI } = useAuth();
     const [errors, setErrors] = useState([]);
 
     const handleDelete = async () => {
         setLoading(true);
         const baseURL = 'https://api.github.com/repos';
+        let successes = ['hi', 'bye'];
         let rejects = [];
 
-        Promise.allSettled(state.repos.map(repo => {
+        await Promise.allSettled(state.repos.map(repo => {
             return fetch(`${baseURL}/${repo.owner.login}/${repo.name}`, {
                 method: 'DELETE',
                 headers: {
@@ -28,8 +29,16 @@ const Review = () => {
             });
         }))
         .then(res => {
-            rejects = res.filter(({status})=> status === 'rejected');
-        })
+            successes = res.filter(({ status }) => status === 'fulfilled');
+            rejects = res.filter(({ status }) => status === 'rejected');
+        });
+
+        // updates user deleted repos count
+        statsAPI('deletedReposCount').once('value', (snapshot) => {
+            const deletedCount = snapshot.val();
+            const successCount = successes.length;
+            statsAPI().update({ deletedReposCount: deletedCount + successCount });
+        });
 
         if (rejects.length === 0) {
             dispatch({ type: 'DELETE_REPOS' });
