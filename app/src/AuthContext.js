@@ -79,9 +79,12 @@ const AuthProvider = ({ children }) => {
 
     const statsAPI = (path = null) => path ? db.ref(`users/${currentUser.uid}/stats/${path}`) : db.ref(`users/${currentUser.uid}/stats`);
 
+    // *** Global API ***
+    const analyticsAPI = () => db.ref('analytics/deletedReposCount');
+
     return (
         <AuthContext.Provider
-            value={{ currentUser, accessToken, authState, login, logout, userAPI, statsAPI }}
+            value={{ currentUser, accessToken, authState, login, logout, userAPI, statsAPI, analyticsAPI }}
         >
             {children}
         </AuthContext.Provider>
