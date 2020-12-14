@@ -42,6 +42,7 @@
 -   [ ] Redireect
 -   [ ] Favicon
 -   [ ] Show error list if error
+-   [ ] When navigating back to Dashboard, show refreshed gh list. (possibly caching result?)
 
 # RELEASE NOTES
 
