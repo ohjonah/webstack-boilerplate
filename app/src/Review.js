@@ -11,7 +11,7 @@ const Review = () => {
     const [state, dispatch] = useRepos();
     const [isLoading, setLoading] = useState(false);
     const [hasDeleted, setHasDeleted] = useState(false);
-    const { currentUser, accessToken, userAPI, statsAPI, analyticsAPI } = useAuth();
+    const { accessToken, statsAPI, analyticsAPI } = useAuth();
     const [errors, setErrors] = useState([]);
 
     const handleDelete = async () => {

@@ -1,13 +1,15 @@
 # Things I've learned:
 
 -   Libraries: React, TailwindCSS, Firebase Auth
--   React: Hooks / Reducers / Context
+-   React: Hooks / Reducers / Context / React-Router-Dom
 -   Deploying through Netlify
 -   Minimal Webpack with SVG support
 -   Consuming data from an api
 -   Protected Routes using `react-router-dom`
 -   Implementing a table with sorting capabilities for data
--   Handling async/await in a reducer.
+-   Thinking through API calls for minimal read/write
+-   Firebase security
+-   Optimizing my bundle
 
 # USER FLOW
 
@@ -32,7 +34,14 @@
 -   [x] Store Context for passing data for "Review" stage.
 -   [x] Review Page
     -   [x] deselect item
-    -   [] undo deselected item
+    -   [x] undo deselected item
+-   [ ] Track total repo count for all users
+-   [ ] Track deleted repo count for user.
+-   [ ] [Google Firebase Security Rules](https://firebase.google.com/docs/database/security/core-syntax) for read:write access
+-   [ ] Optimize CSS/Assets bundle
+-   [ ] Redireect
+-   [ ] Favicon
+-   [ ] Show error list if error
 
 # RELEASE NOTES
 
