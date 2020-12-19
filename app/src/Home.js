@@ -25,11 +25,7 @@ const Home = () => {
 
                 <p className="text-xl">
                     Have you ever wanted to bulk delete your repos? Use this to
-                    quickly delete your repos.
-                </p>
-                <p className="text-xl">
-                    User information isn't saved. Once you log out, your account
-                    is deleted.
+                    quickly delete them.
                 </p>
                 <p className="text-xl">
                     Made with Javascript, React, Webpack, Babel, TailwindCSS.
