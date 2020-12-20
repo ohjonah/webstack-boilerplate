@@ -108,3 +108,7 @@ WARNING in entrypoint size limit: The following entrypoint(s) combined asset siz
 Entrypoints:
 main (4.55 MiB)
 bundle.js
+
+Build command:
+adds netlify redirect config
+More info: https://docs.netlify.com/routing/redirects/rewrites-proxies/#history-pushstate-and-single-page-apps
